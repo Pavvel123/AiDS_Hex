@@ -128,6 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AiDS_Hex.cpp" />
+    <ClCompile Include="Hex.cpp" />
+    <ClCompile Include="HexBoard.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Hex.h" />
+    <ClInclude Include="HexBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
