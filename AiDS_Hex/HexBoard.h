@@ -4,14 +4,21 @@
 
 using std::vector;
 
+enum EnumIsGameOver
+{
+	no,
+	yes_red,
+	yes_blue
+};
+
 class HexBoard
 {
 private:
 	vector<vector<Hex*>*> board;
-	int boardSize;
 	int bluePawnsNumber;
 	int redPawnsNumber;
-	bool isBoardCorrect;
+	bool Dfs(int vec1Index, int vec2Index, Colour colour) const;
+	void ResetAllVisited() const;
 
 public:
 	HexBoard();
@@ -19,4 +26,6 @@ public:
 	int GetBluePawnsNumber() const;
 	int GetRedPawnsNumber() const;
 	bool GetIsBoardCorrect() const;
+	EnumIsGameOver GetIsGameOver() const;
+	~HexBoard();
 };

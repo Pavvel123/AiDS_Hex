@@ -5,6 +5,46 @@
 using std::cin;
 using std::string;
 
+bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour) const
+{
+	if (vec1Index < 0 || vec2Index < 0 || vec1Index >= board.size() || vec2Index >= board[vec1Index]->size())
+	{
+		return false;
+	}
+	if ((*board[vec1Index])[vec2Index]->GetVisited() || (*board[vec1Index])[vec2Index]->GetColour() != colour)
+	{
+		return false;
+	}
+	else if (vec1Index + 1 >= board.size() && colour == red || vec2Index + 1 >= board[vec1Index]->size() && colour == blue)
+	{
+		if ((*board[vec1Index])[vec2Index]->GetColour() == colour)
+		{
+			(*board[vec1Index])[vec2Index]->SetVisited(true);
+			return true;
+		}
+	}
+	(*board[vec1Index])[vec2Index]->SetVisited(true);
+	if (Dfs(vec1Index, vec2Index + 1, colour)) return true;
+	if (Dfs(vec1Index + 1, vec2Index, colour)) return true;
+	if (Dfs(vec1Index + 1, vec2Index + 1, colour)) return true;
+
+	if (Dfs(vec1Index, vec2Index - 1, colour)) return true;
+	if (Dfs(vec1Index - 1, vec2Index, colour)) return true;
+	if (Dfs(vec1Index - 1, vec2Index - 1, colour)) return true;
+	return false;
+}
+
+void HexBoard::ResetAllVisited() const
+{
+	for (int i = 0; i < GetBoardSize(); i++)
+	{
+		for (int k = 0; k < GetBoardSize(); k++)
+		{
+			(*board[i])[k]->SetVisited(false);
+		}
+	}
+}
+
 HexBoard::HexBoard()
 {
 	redPawnsNumber = 0;
@@ -72,20 +112,11 @@ HexBoard::HexBoard()
 			i = k;
 		}
 	} while (input != "---");
-	boardSize = board.size();
-	if (redPawnsNumber == bluePawnsNumber || redPawnsNumber == bluePawnsNumber + 1)
-	{
-		isBoardCorrect = true;
-	}
-	else
-	{
-		isBoardCorrect = false;
-	}
 }
 
 int HexBoard::GetBoardSize() const
 {
-	return boardSize;
+	return board.size();
 }
 
 int HexBoard::GetBluePawnsNumber() const
@@ -100,5 +131,45 @@ int HexBoard::GetRedPawnsNumber() const
 
 bool HexBoard::GetIsBoardCorrect() const
 {
-	return isBoardCorrect;
+	if (redPawnsNumber == bluePawnsNumber || redPawnsNumber == bluePawnsNumber + 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+EnumIsGameOver HexBoard::GetIsGameOver() const
+{
+	if (GetIsBoardCorrect())
+	{
+		for (int i = 0; i < GetBoardSize(); i++)
+		{
+			ResetAllVisited();
+			if (Dfs(i, 0, blue))
+			{
+				return yes_blue;
+			}
+			ResetAllVisited();
+			if (Dfs(0, i, red))
+			{
+				return yes_red;
+			}
+		}
+	}
+	return no;
+}
+
+HexBoard::~HexBoard()
+{
+	for (int i = 0; i < GetBoardSize(); i++)
+	{
+		for (int k = 0; k < GetBoardSize(); k++)
+		{
+			delete (*board[i])[k];
+		}
+		delete board[i];
+	}
 }
