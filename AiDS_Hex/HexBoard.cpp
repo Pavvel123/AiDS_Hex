@@ -5,7 +5,7 @@
 using std::cin;
 using std::string;
 
-bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour) const
+bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour)
 {
 	if (vec1Index < 0 || vec2Index < 0 || vec1Index >= board.size() || vec2Index >= board[vec1Index]->size())
 	{
@@ -24,25 +24,52 @@ bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour) const
 		}
 	}
 	(*board[vec1Index])[vec2Index]->SetVisited(true);
-	if (Dfs(vec1Index, vec2Index + 1, colour)) return true;
-	if (Dfs(vec1Index + 1, vec2Index, colour)) return true;
-	if (Dfs(vec1Index + 1, vec2Index + 1, colour)) return true;
+	if (Dfs(vec1Index, vec2Index + 1, colour))
+	{
+		return true;
+	}
+	if (Dfs(vec1Index + 1, vec2Index, colour))
+	{
+		return true;
+	}
+	if (Dfs(vec1Index + 1, vec2Index + 1, colour))
+	{
+		return true;
+	}
 
-	if (Dfs(vec1Index, vec2Index - 1, colour)) return true;
-	if (Dfs(vec1Index - 1, vec2Index, colour)) return true;
-	if (Dfs(vec1Index - 1, vec2Index - 1, colour)) return true;
+	if (Dfs(vec1Index, vec2Index - 1, colour))
+	{
+		return true;
+	}
+	if (Dfs(vec1Index - 1, vec2Index, colour))
+	{
+		return true;
+	}
+	if (Dfs(vec1Index - 1, vec2Index - 1, colour))
+	{
+		return true;
+	}
 	return false;
 }
 
 void HexBoard::ResetAllVisited() const
 {
-	for (int i = 0; i < GetBoardSize(); i++)
+	for (int i = 0; i < BoardSize(); i++)
 	{
-		for (int k = 0; k < GetBoardSize(); k++)
+		for (int k = 0; k < BoardSize(); k++)
 		{
 			(*board[i])[k]->SetVisited(false);
 		}
 	}
+}
+
+Colour HexBoard::NowTurn() const
+{
+	if (redPawnsNumber == bluePawnsNumber)
+	{
+		return red;
+	}
+	return blue;
 }
 
 HexBoard::HexBoard()
@@ -112,11 +139,7 @@ HexBoard::HexBoard()
 			i = k;
 		}
 	} while (input != "---");
-}
 
-int HexBoard::GetBoardSize() const
-{
-	return board.size();
 }
 
 int HexBoard::GetBluePawnsNumber() const
@@ -129,7 +152,12 @@ int HexBoard::GetRedPawnsNumber() const
 	return redPawnsNumber;
 }
 
-bool HexBoard::GetIsBoardCorrect() const
+int HexBoard::BoardSize() const
+{
+	return board.size();
+}
+
+bool HexBoard::IsBoardCorrect() const
 {
 	if (redPawnsNumber == bluePawnsNumber || redPawnsNumber == bluePawnsNumber + 1)
 	{
@@ -141,11 +169,11 @@ bool HexBoard::GetIsBoardCorrect() const
 	}
 }
 
-EnumIsGameOver HexBoard::GetIsGameOver() const
+EnumIsGameOver HexBoard::IsGameOver()
 {
-	if (GetIsBoardCorrect())
+	if (IsBoardCorrect())
 	{
-		for (int i = 0; i < GetBoardSize(); i++)
+		for (int i = 0; i < BoardSize(); i++)
 		{
 			ResetAllVisited();
 			if (Dfs(i, 0, blue))
@@ -162,11 +190,50 @@ EnumIsGameOver HexBoard::GetIsGameOver() const
 	return no;
 }
 
+bool HexBoard::IsBoardPossible()
+{
+	EnumIsGameOver isGameOver = IsGameOver();
+	if (IsBoardCorrect() && (isGameOver == yes_blue && NowTurn() == red || isGameOver == yes_red && NowTurn() == blue || isGameOver == no))
+	{
+		if (isGameOver != no)
+		{
+			Colour colour;
+			if (isGameOver == yes_red)
+			{
+				colour = red;
+			}
+			else
+			{
+				colour = blue;
+			}
+
+			for (int i = 0; i < BoardSize(); i++)
+			{
+				for (int k = 0; k < BoardSize(); k++)
+				{
+					if ((*board[i])[k]->GetColour() == colour)
+					{
+						(*board[i])[k]->SetColour(none);
+						if (IsGameOver() != isGameOver)
+						{
+							return true;
+						}
+						(*board[i])[k]->SetColour(colour);
+					}
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 HexBoard::~HexBoard()
 {
-	for (int i = 0; i < GetBoardSize(); i++)
+	for (int i = 0; i < BoardSize(); i++)
 	{
-		for (int k = 0; k < GetBoardSize(); k++)
+		for (int k = 0; k < BoardSize(); k++)
 		{
 			delete (*board[i])[k];
 		}

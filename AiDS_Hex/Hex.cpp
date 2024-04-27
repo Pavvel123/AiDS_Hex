@@ -14,6 +14,11 @@ bool Hex::GetVisited() const
 	return visited;
 }
 
+void Hex::SetColour(Colour col)
+{
+	colour = col;
+}
+
 void Hex::SetVisited(bool vis)
 {
 	visited = vis;

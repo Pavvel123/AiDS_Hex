@@ -17,5 +17,6 @@ public:
 	Colour GetColour() const;
 	bool GetVisited() const;
 
+	void SetColour(Colour col);
 	void SetVisited(bool vis);
 };

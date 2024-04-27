@@ -1,8 +1,6 @@
 ﻿#include <iostream>
 #include <string>
 #include "HexBoard.h"
-#define SIZE 517
-#define SIZE1 1
 
 using std::cout;
 using std::cin;
@@ -11,7 +9,7 @@ using std::string;
 
 int main()
 {
-	int size = 10;
+	int size = 1;
 	string input = "";
 	HexBoard* board = nullptr;
 	for (int i = 0; i < size; i++)
@@ -21,7 +19,7 @@ int main()
 		if (input == "BOARD_SIZE")
 		{
 			size = 517;
-			cout << board->GetBoardSize();
+			cout << board->BoardSize();
 		}
 		else if (input == "PAWNS_NUMBER")
 		{
@@ -31,12 +29,12 @@ int main()
 		else if (input == "IS_BOARD_CORRECT")
 		{
 			size = 517;
-			cout << (board->GetIsBoardCorrect() ? "YES" : "NO");
+			cout << (board->IsBoardCorrect() ? "YES" : "NO");
 		}
 		else if (input == "IS_GAME_OVER")
 		{
 			size = 1034;
-			switch (board->GetIsGameOver())
+			switch (board->IsGameOver())
 			{
 			case no:
 				cout << "NO";
@@ -49,23 +47,14 @@ int main()
 				break;
 			}
 		}
+		else if (input == "IS_BOARD_POSSIBLE")
+		{
+			size = 1017;
+			cout << (board->IsBoardPossible() ? "YES" : "NO");
+		}
 		delete board;
 		cout << endl << endl;
 	}
 
 	return 0;
 }
-
-/*
-		  ---
-	   --< b >--
-	--<   >-< r >--
- --< b >-< r >-< b >--
-< b >-< r >-< b >-< r >
- --<   >-< b >-< r >--
-	--< r >-< r >--
-	   --< b >--
-		  ---
-IS_GAME_OVER
-
-*/
