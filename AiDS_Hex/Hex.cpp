@@ -23,3 +23,7 @@ void Hex::SetVisited(bool vis)
 {
 	visited = vis;
 }
+
+Hex::~Hex()
+{
+}

@@ -2,34 +2,39 @@
 #include <string>
 #include "HexBoard.h"
 
-using std::cout;
-using std::cin;
-using std::endl;
-using std::string;
-
 int main()
 {
 	int size = 1;
-	string input = "";
-	HexBoard* board = nullptr;
 	for (int i = 0; i < size; i++)
 	{
-		board = new HexBoard();
-		cin >> input;
-		if (input == "BOARD_SIZE")
+		std::string input;
+		HexBoard* board = new HexBoard();
+		std::cin >> input;
+		if (input == "CAN_RED_WIN_IN_1_MOVE_WITH_NAIVE_OPPONENT")
+		{
+			size = 1206;
+			std::cout << (board->CanRed1Naive() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanBlue1Naive() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanRed2Naive() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanBlue2Naive() ? "YES" : "NO");
+		}
+		else if (input == "BOARD_SIZE")
 		{
 			size = 517;
-			cout << board->BoardSize();
+			std::cout << board->BoardSize();
 		}
 		else if (input == "PAWNS_NUMBER")
 		{
 			size = 517;
-			cout << board->GetRedPawnsNumber() + board->GetBluePawnsNumber();
+			std::cout << board->GetRedPawnsNumber() + board->GetBluePawnsNumber();
 		}
 		else if (input == "IS_BOARD_CORRECT")
 		{
 			size = 517;
-			cout << (board->IsBoardCorrect() ? "YES" : "NO");
+			std::cout << (board->IsBoardCorrect() ? "YES" : "NO");
 		}
 		else if (input == "IS_GAME_OVER")
 		{
@@ -37,23 +42,24 @@ int main()
 			switch (board->IsGameOver())
 			{
 			case no:
-				cout << "NO";
+				std::cout << "NO";
 				break;
 			case yes_red:
-				cout << "YES RED";
+				std::cout << "YES RED";
 				break;
 			case yes_blue:
-				cout << "YES BLUE";
+				std::cout << "YES BLUE";
 				break;
 			}
 		}
 		else if (input == "IS_BOARD_POSSIBLE")
 		{
 			size = 1017;
-			cout << (board->IsBoardPossible() ? "YES" : "NO");
+			std::cout << (board->IsBoardPossible() ? "YES" : "NO");
 		}
+		
 		delete board;
-		cout << endl << endl;
+		std::cout << "\n\n";
 	}
 
 	return 0;

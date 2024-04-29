@@ -19,4 +19,5 @@ public:
 
 	void SetColour(Colour col);
 	void SetVisited(bool vis);
+	~Hex();
 };

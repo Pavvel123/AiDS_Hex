@@ -2,9 +2,6 @@
 #include <iostream>
 #include <string>
 
-using std::cin;
-using std::string;
-
 bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour)
 {
 	if (vec1Index < 0 || vec2Index < 0 || vec1Index >= board.size() || vec2Index >= board[vec1Index]->size())
@@ -19,7 +16,7 @@ bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour)
 	{
 		if ((*board[vec1Index])[vec2Index]->GetColour() == colour)
 		{
-			(*board[vec1Index])[vec2Index]->SetVisited(true);
+			//(*board[vec1Index])[vec2Index]->SetVisited(true);
 			return true;
 		}
 	}
@@ -52,11 +49,12 @@ bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour)
 	return false;
 }
 
-void HexBoard::ResetAllVisited() const
+void HexBoard::ResetAllVisited()
 {
-	for (int i = 0; i < BoardSize(); i++)
+	int boardSize = BoardSize();
+	for (int i = 0; i < boardSize; i++)
 	{
-		for (int k = 0; k < BoardSize(); k++)
+		for (int k = 0; k < boardSize; k++)
 		{
 			(*board[i])[k]->SetVisited(false);
 		}
@@ -72,31 +70,183 @@ Colour HexBoard::NowTurn() const
 	return blue;
 }
 
+bool HexBoard::CanRed1NaiveStartRed()
+{
+	int boardSize = BoardSize();
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if ((*board[i])[k]->GetColour() == none)
+			{
+				(*board[i])[k]->SetColour(red);
+				redPawnsNumber++;
+				if (IsGameOver(red) == yes_red)
+				{
+					(*board[i])[k]->SetColour(none);
+					redPawnsNumber--;
+					return true;
+				}
+				(*board[i])[k]->SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanRed1NaiveStartBlue()
+{
+	int boardSize = BoardSize();
+	bluePawnsNumber++;
+	if (bluePawnsNumber + redPawnsNumber + 1 <= boardSize * boardSize && CanRed1NaiveStartRed())
+	{
+		bluePawnsNumber--;
+		return true;
+	}
+	bluePawnsNumber--;
+	return false;
+}
+
+bool HexBoard::CanBlue1NaiveStartBlue()
+{
+	int boardSize = BoardSize();
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if ((*board[i])[k]->GetColour() == none)
+			{
+				(*board[i])[k]->SetColour(blue);
+				bluePawnsNumber++;
+				if (IsGameOver(blue) == yes_blue)
+				{
+					(*board[i])[k]->SetColour(none);
+					bluePawnsNumber--;
+					return true;
+				}
+				(*board[i])[k]->SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanBlue1NaiveStartRed()
+{
+	int boardSize = BoardSize();
+	redPawnsNumber++;
+	if (bluePawnsNumber + redPawnsNumber + 1 <= boardSize * boardSize && CanBlue1NaiveStartBlue())
+	{
+		redPawnsNumber--;
+		return true;
+	}
+	redPawnsNumber--;
+	return false;
+}
+
+bool HexBoard::CanRed2NaiveStartRed()
+{
+	int boardSize = BoardSize();
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if ((*board[i])[k]->GetColour() == none)
+			{
+				(*board[i])[k]->SetColour(red);
+				redPawnsNumber++;
+				if (CanRed1NaiveStartBlue())
+				{
+					(*board[i])[k]->SetColour(none);
+					redPawnsNumber--;
+					return true;
+				}
+				(*board[i])[k]->SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanRed2NaiveStartBlue()
+{
+	int boardSize = BoardSize();
+	bluePawnsNumber++;
+	if (bluePawnsNumber + redPawnsNumber + 3 <= boardSize * boardSize && CanRed2NaiveStartRed())
+	{
+		bluePawnsNumber--;
+		return true;
+	}
+	bluePawnsNumber--;
+	return false;
+}
+
+bool HexBoard::CanBlue2NaiveStartRed()
+{
+	int boardSize = BoardSize();
+	redPawnsNumber++;
+	if (bluePawnsNumber + redPawnsNumber + 3 <= boardSize * boardSize && CanBlue2NaiveStartBlue())
+	{
+		redPawnsNumber--;
+		return true;
+	}
+	redPawnsNumber--;
+	return false;
+}
+
+bool HexBoard::CanBlue2NaiveStartBlue()
+{
+	int boardSize = BoardSize();
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if ((*board[i])[k]->GetColour() == none)
+			{
+				(*board[i])[k]->SetColour(blue);
+				bluePawnsNumber++;
+				if (CanBlue1NaiveStartRed())
+				{
+					(*board[i])[k]->SetColour(none);
+					bluePawnsNumber--;
+					return true;
+				}
+				(*board[i])[k]->SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
 HexBoard::HexBoard()
 {
 	redPawnsNumber = 0;
 	bluePawnsNumber = 0;
-	string input;
-	cin >> input; // "---"
+	std::string input;
+	std::cin >> input; // "---"
 	int i = 0;
 	do
 	{
-		board.push_back(new vector<Hex*>());
-		cin >> input; // "--<
+		board.push_back(new std::vector<Hex*>());
+		std::cin >> input; // "--<
 		do
 		{
-			cin >> input;
+			std::cin >> input;
 			if (input == "r")
 			{
 				board[i]->push_back(new Hex(red));
 				redPawnsNumber++;
-				cin >> input;
+				std::cin >> input;
 			}
 			else if (input == "b")
 			{
 				board[i]->push_back(new Hex(blue));
 				bluePawnsNumber++;
-				cin >> input;
+				std::cin >> input;
 			}
 			else
 			{
@@ -111,23 +261,23 @@ HexBoard::HexBoard()
 	i = k;
 	do
 	{
-		cin >> input; // "--<
+		std::cin >> input; // "--<
 		if (input != "---")
 		{
 			do
 			{
-				cin >> input;
+				std::cin >> input;
 				if (input == "r")
 				{
 					board[i]->push_back(new Hex(red));
 					redPawnsNumber++;
-					cin >> input;
+					std::cin >> input;
 				}
 				else if (input == "b")
 				{
 					board[i]->push_back(new Hex(blue));
 					bluePawnsNumber++;
-					cin >> input;
+					std::cin >> input;
 				}
 				else
 				{
@@ -169,21 +319,28 @@ bool HexBoard::IsBoardCorrect() const
 	}
 }
 
-EnumIsGameOver HexBoard::IsGameOver()
+EnumIsGameOver HexBoard::IsGameOver(Colour col)
 {
 	if (IsBoardCorrect())
 	{
-		for (int i = 0; i < BoardSize(); i++)
+		int boardSize = BoardSize();
+		for (int i = 0; i < boardSize; i++)
 		{
-			ResetAllVisited();
-			if (Dfs(i, 0, blue))
+			if ((col == blue || col == none) && (*board[i])[0]->GetColour() == blue)
 			{
-				return yes_blue;
+				ResetAllVisited();
+				if (Dfs(i, 0, blue))
+				{
+					return yes_blue;
+				}
 			}
-			ResetAllVisited();
-			if (Dfs(0, i, red))
+			if ((col == red || col == none) && (*board[0])[i]->GetColour() == red)
 			{
-				return yes_red;
+				ResetAllVisited();
+				if (Dfs(0, i, red))
+				{
+					return yes_red;
+				}
 			}
 		}
 	}
@@ -207,9 +364,10 @@ bool HexBoard::IsBoardPossible()
 				colour = blue;
 			}
 
-			for (int i = 0; i < BoardSize(); i++)
+			int boardSize = BoardSize();
+			for (int i = 0; i < boardSize; i++)
 			{
-				for (int k = 0; k < BoardSize(); k++)
+				for (int k = 0; k < boardSize; k++)
 				{
 					if ((*board[i])[k]->GetColour() == colour)
 					{
@@ -229,14 +387,89 @@ bool HexBoard::IsBoardPossible()
 	return false;
 }
 
+bool HexBoard::CanRed1Naive()
+{
+	if (redPawnsNumber + 1 >= BoardSize() && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanRed1NaiveStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanRed1NaiveStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanBlue1Naive()
+{
+	if (bluePawnsNumber + 1 >= BoardSize() && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == blue)
+		{
+			if (CanBlue1NaiveStartBlue()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == red)
+		{
+			if (CanBlue1NaiveStartRed()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanRed2Naive()
+{
+	if (redPawnsNumber + 2 >= BoardSize() && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanRed2NaiveStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanRed2NaiveStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanBlue2Naive()
+{
+	if (bluePawnsNumber + 2 >= BoardSize() && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanBlue2NaiveStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanBlue2NaiveStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
 HexBoard::~HexBoard()
 {
-	for (int i = 0; i < BoardSize(); i++)
+	int boardSize = BoardSize();
+	for (int i = boardSize - 1; i >= 0; i--)
 	{
-		for (int k = 0; k < BoardSize(); k++)
+		for (int k = boardSize - 1; k >= 0; k--)
 		{
 			delete (*board[i])[k];
+			(*board[i]).erase((*board[i]).begin() + k);
 		}
 		delete board[i];
+		board.erase(board.begin() + i);
 	}
 }
