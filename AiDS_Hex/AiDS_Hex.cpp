@@ -9,7 +9,17 @@ int main()
 	{
 		HexBoard* board = new HexBoard();
 		std::cin >> input;
-		if (input == "CAN_RED_WIN_IN_1_MOVE_WITH_NAIVE_OPPONENT")
+		if (input == "CAN_RED_WIN_IN_1_MOVE_WITH_PERFECT_OPPONENT")
+		{
+			std::cout << (board->CanRed1Perfect() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanBlue1Perfect() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanRed2Perfect() ? "YES\n" : "NO\n");
+			std::cin >> input;
+			std::cout << (board->CanBlue2Perfect() ? "YES" : "NO");
+		}
+		else if (input == "CAN_RED_WIN_IN_1_MOVE_WITH_NAIVE_OPPONENT")
 		{
 			std::cout << (board->CanRed1Naive() ? "YES\n" : "NO\n");
 			std::cin >> input;

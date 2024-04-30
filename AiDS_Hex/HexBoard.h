@@ -30,6 +30,15 @@ private:
 	bool CanBlue2NaiveStartRed();
 	bool CanBlue2NaiveStartBlue();
 
+	bool CanRed1PerfectStartRed();
+	bool CanRed1PerfectStartBlue();
+	bool CanBlue1PerfectStartBlue();
+	bool CanBlue1PerfectStartRed();
+	bool CanRed2PerfectStartRed();
+	bool CanRed2PerfectStartBlue();
+	bool CanBlue2PerfectStartRed();
+	bool CanBlue2PerfectStartBlue();
+
 public:
 	HexBoard();
 	int GetBluePawnsNumber() const;
@@ -42,5 +51,10 @@ public:
 	bool CanBlue1Naive();
 	bool CanRed2Naive();
 	bool CanBlue2Naive();
+
+	bool CanRed1Perfect();
+	bool CanBlue1Perfect();
+	bool CanRed2Perfect();
+	bool CanBlue2Perfect();
 	~HexBoard();
 };

@@ -21,31 +21,13 @@ bool HexBoard::Dfs(int vec1Index, int vec2Index, Colour colour)
 		}
 	}
 	board[vec1Index][vec2Index].SetVisited(true);
-	if (Dfs(vec1Index, vec2Index + 1, colour))
-	{
-		return true;
-	}
-	if (Dfs(vec1Index + 1, vec2Index, colour))
-	{
-		return true;
-	}
-	if (Dfs(vec1Index + 1, vec2Index + 1, colour))
-	{
-		return true;
-	}
+	if (Dfs(vec1Index, vec2Index + 1, colour)) return true;
+	if (Dfs(vec1Index + 1, vec2Index, colour)) return true;
+	if (Dfs(vec1Index + 1, vec2Index + 1, colour)) return true;
 
-	if (Dfs(vec1Index, vec2Index - 1, colour))
-	{
-		return true;
-	}
-	if (Dfs(vec1Index - 1, vec2Index, colour))
-	{
-		return true;
-	}
-	if (Dfs(vec1Index - 1, vec2Index - 1, colour))
-	{
-		return true;
-	}
+	if (Dfs(vec1Index, vec2Index - 1, colour)) return true;
+	if (Dfs(vec1Index - 1, vec2Index, colour)) return true;
+	if (Dfs(vec1Index - 1, vec2Index - 1, colour)) return true;
 	return false;
 }
 
@@ -72,7 +54,6 @@ Colour HexBoard::NowTurn() const
 
 bool HexBoard::CanRed1NaiveStartRed()
 {
-	
 	for (int i = 0; i < boardSize; i++)
 	{
 		for (int k = 0; k < boardSize; k++)
@@ -97,7 +78,6 @@ bool HexBoard::CanRed1NaiveStartRed()
 
 bool HexBoard::CanRed1NaiveStartBlue()
 {
-	
 	bluePawnsNumber++;
 	if (bluePawnsNumber + redPawnsNumber + 1 <= boardSize * boardSize && CanRed1NaiveStartRed())
 	{
@@ -110,7 +90,6 @@ bool HexBoard::CanRed1NaiveStartBlue()
 
 bool HexBoard::CanBlue1NaiveStartBlue()
 {
-	
 	for (int i = 0; i < boardSize; i++)
 	{
 		for (int k = 0; k < boardSize; k++)
@@ -135,7 +114,6 @@ bool HexBoard::CanBlue1NaiveStartBlue()
 
 bool HexBoard::CanBlue1NaiveStartRed()
 {
-	
 	redPawnsNumber++;
 	if (bluePawnsNumber + redPawnsNumber + 1 <= boardSize * boardSize && CanBlue1NaiveStartBlue())
 	{
@@ -148,7 +126,6 @@ bool HexBoard::CanBlue1NaiveStartRed()
 
 bool HexBoard::CanRed2NaiveStartRed()
 {
-	
 	for (int i = 0; i < boardSize; i++)
 	{
 		for (int k = 0; k < boardSize; k++)
@@ -173,7 +150,6 @@ bool HexBoard::CanRed2NaiveStartRed()
 
 bool HexBoard::CanRed2NaiveStartBlue()
 {
-	
 	bluePawnsNumber++;
 	if (bluePawnsNumber + redPawnsNumber + 3 <= boardSize * boardSize && CanRed2NaiveStartRed())
 	{
@@ -186,7 +162,6 @@ bool HexBoard::CanRed2NaiveStartBlue()
 
 bool HexBoard::CanBlue2NaiveStartRed()
 {
-	
 	redPawnsNumber++;
 	if (bluePawnsNumber + redPawnsNumber + 3 <= boardSize * boardSize && CanBlue2NaiveStartBlue())
 	{
@@ -199,7 +174,6 @@ bool HexBoard::CanBlue2NaiveStartRed()
 
 bool HexBoard::CanBlue2NaiveStartBlue()
 {
-	
 	for (int i = 0; i < boardSize; i++)
 	{
 		for (int k = 0; k < boardSize; k++)
@@ -209,6 +183,326 @@ bool HexBoard::CanBlue2NaiveStartBlue()
 				board[i][k].SetColour(blue);
 				bluePawnsNumber++;
 				if (!IsGameOver() && CanBlue1NaiveStartRed())
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+					return true;
+				}
+				board[i][k].SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
+
+bool HexBoard::CanRed1PerfectStartRed()
+{
+	if (CanRed1NaiveStartRed()) return true;
+	else return false;
+}
+
+bool HexBoard::CanRed1PerfectStartBlue()
+{
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (IsGameOver(blue) == yes_blue)
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (IsGameOver(red) == yes_red)
+				{
+					board[i][k].SetColour(blue);
+					redPawnsNumber--;
+					bluePawnsNumber++;
+					if (!CanRed1PerfectStartRed())
+					{
+						board[i][k].SetColour(none);
+						bluePawnsNumber--;
+						return false;
+					}
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+				}
+				else
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (!CanRed1PerfectStartRed())
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool HexBoard::CanBlue1PerfectStartBlue()
+{
+	if (CanBlue1NaiveStartBlue()) return true;
+	else return false;
+}
+
+bool HexBoard::CanBlue1PerfectStartRed()
+{
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (IsGameOver(red) == yes_red)
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (IsGameOver(blue) == yes_blue)
+				{
+					board[i][k].SetColour(red);
+					bluePawnsNumber--;
+					redPawnsNumber++;
+					if (!CanBlue1PerfectStartBlue())
+					{
+						board[i][k].SetColour(none);
+						redPawnsNumber--;
+						return false;
+					}
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+				}
+				else
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (!CanBlue1PerfectStartBlue())
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+	return true;
+}
+
+bool HexBoard::CanRed2PerfectStartRed()
+{
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (IsGameOver(red) == no && CanRed1PerfectStartBlue())
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+					return true;
+				}
+				board[i][k].SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanRed2PerfectStartBlue()
+{
+	if (CanBlue1PerfectStartBlue()) return false;
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (IsGameOver(red) == yes_red)
+				{
+					board[i][k].SetColour(blue);
+					redPawnsNumber--;
+					bluePawnsNumber++;
+					if (!CanRed2PerfectStartRed())
+					{
+						board[i][k].SetColour(none);
+						bluePawnsNumber--;
+						return false;
+					}
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+				}
+				else
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (!CanRed2PerfectStartRed())
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				bluePawnsNumber--;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool HexBoard::CanBlue2PerfectStartRed()
+{
+	if (CanRed1PerfectStartRed()) return false;
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (IsGameOver(blue) == yes_blue)
+				{
+					board[i][k].SetColour(red);
+					bluePawnsNumber--;
+					redPawnsNumber++;
+					if (!CanBlue2PerfectStartBlue())
+					{
+						board[i][k].SetColour(none);
+						redPawnsNumber--;
+						return false;
+					}
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+				}
+				else
+				{
+					board[i][k].SetColour(none);
+					bluePawnsNumber--;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(red);
+				redPawnsNumber++;
+				if (!CanBlue2PerfectStartBlue())
+				{
+					board[i][k].SetColour(none);
+					redPawnsNumber--;
+					return false;
+				}
+				board[i][k].SetColour(none);
+				redPawnsNumber--;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool HexBoard::CanBlue2PerfectStartBlue()
+{
+	for (int i = 0; i < boardSize; i++)
+	{
+		for (int k = 0; k < boardSize; k++)
+		{
+			if (board[i][k].GetColour() == none)
+			{
+				board[i][k].SetColour(blue);
+				bluePawnsNumber++;
+				if (IsGameOver(blue) == no && CanBlue1PerfectStartRed())
 				{
 					board[i][k].SetColour(none);
 					bluePawnsNumber--;
@@ -458,6 +752,79 @@ bool HexBoard::CanBlue2Naive()
 		else //if (NowTurn() == blue)
 		{
 			if (CanBlue2NaiveStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+
+bool HexBoard::CanRed1Perfect()
+{
+	if (redPawnsNumber + 1 >= boardSize && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanRed1PerfectStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanRed1PerfectStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanBlue1Perfect()
+{
+	if (bluePawnsNumber + 1 >= boardSize && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == blue)
+		{
+			if (CanBlue1PerfectStartBlue()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == red)
+		{
+			if (CanBlue1PerfectStartRed()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanRed2Perfect()
+{
+	if (redPawnsNumber + 2 >= boardSize && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanRed2PerfectStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanRed2PerfectStartBlue()) return true;
+			else return false;
+		}
+	}
+	return false;
+}
+
+bool HexBoard::CanBlue2Perfect()
+{
+	if (bluePawnsNumber + 2 >= boardSize && IsBoardCorrect() && IsGameOver() == no)
+	{
+		if (NowTurn() == red)
+		{
+			if (CanBlue2PerfectStartRed()) return true;
+			else return false;
+		}
+		else //if (NowTurn() == blue)
+		{
+			if (CanBlue2PerfectStartBlue()) return true;
 			else return false;
 		}
 	}
