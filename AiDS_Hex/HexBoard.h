@@ -21,23 +21,16 @@ private:
 	bool Dfs(int vec1Index, int vec2Index, Colour colour);
 	void ResetAllVisited();
 	Colour NowTurn() const;
-	bool CanRed1NaiveStartRed();
-	bool CanRed1NaiveStartBlue();
-	bool CanBlue1NaiveStartBlue();
-	bool CanBlue1NaiveStartRed();
-	bool CanRed2NaiveStartRed();
-	bool CanRed2NaiveStartBlue();
-	bool CanBlue2NaiveStartRed();
-	bool CanBlue2NaiveStartBlue();
 
-	bool CanRed1PerfectStartRed();
-	bool CanRed1PerfectStartBlue();
-	bool CanBlue1PerfectStartBlue();
-	bool CanBlue1PerfectStartRed();
-	bool CanRed2PerfectStartRed();
-	bool CanRed2PerfectStartBlue();
-	bool CanBlue2PerfectStartRed();
-	bool CanBlue2PerfectStartBlue();
+	bool CanColour1StartSame(Colour colour);
+
+	bool CanColour1NaiveStartOpposite(Colour colour);
+	bool CanColour2NaiveStartSame(Colour colour);
+	bool CanColour2NaiveStartOpposite(Colour colour);
+
+	bool CanColour1PerfectStartOpposite(Colour colour);
+	bool CanColour2PerfectStartSame(Colour colour);
+	bool CanColour2PerfectStartOpposite(Colour colour);
 
 public:
 	HexBoard();
