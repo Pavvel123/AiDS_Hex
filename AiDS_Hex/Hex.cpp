@@ -1,5 +1,9 @@
 #include "Hex.h"
 
+Hex::Hex() : colour(none), visited(false)
+{
+}
+
 Hex::Hex(Colour colour) : colour(colour), visited(false)
 {
 }

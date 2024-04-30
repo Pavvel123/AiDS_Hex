@@ -13,7 +13,8 @@ private:
 	bool visited;
 
 public:
-	Hex(Colour colour);
+	Hex();
+	explicit Hex(Colour colour);
 	Colour GetColour() const;
 	bool GetVisited() const;
 

@@ -2,6 +2,8 @@
 #include <vector>
 #include "Hex.h"
 
+class Hex;
+
 enum EnumIsGameOver
 {
 	no,
@@ -12,9 +14,10 @@ enum EnumIsGameOver
 class HexBoard
 {
 private:
-	std::vector<std::vector<Hex*>*> board;
+	Hex board[11][11];
 	int bluePawnsNumber;
 	int redPawnsNumber;
+	int boardSize;
 	bool Dfs(int vec1Index, int vec2Index, Colour colour);
 	void ResetAllVisited();
 	Colour NowTurn() const;
@@ -31,7 +34,7 @@ public:
 	HexBoard();
 	int GetBluePawnsNumber() const;
 	int GetRedPawnsNumber() const;
-	int BoardSize() const;
+	int GetBoardSize() const;
 	bool IsBoardCorrect() const;
 	EnumIsGameOver IsGameOver(Colour col = none);
 	bool IsBoardPossible();
